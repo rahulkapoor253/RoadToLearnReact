@@ -20,39 +20,55 @@ const list = [
   },
 ];
 
+const isSearched = (searchTerm) => (item) =>
+  item.title.toLowerCase().includes(searchTerm.toLowerCase());
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       list,
+      searchTerm: "",
     };
 
-    this.onDismiss = this.onDismiss.bind(this);
+    //auto bound using ES6 arrow functions
+    //this.onDismiss = this.onDismiss.bind(this);
   }
 
-  onDismiss(id) {
+  onDismiss = (id) => {
     const updatedList = this.state.list.filter((item) => item.objectID !== id);
     this.setState({
       list: updatedList,
     });
-  }
+  };
+
+  handleInput = (event) => {
+    //console.log(event.target.value);
+    this.setState({
+      searchTerm: event.target.value,
+    });
+  };
 
   render() {
     return (
       <div className="App">
         <div className="App-header">
-          Road to learn React
-          {this.state.list.map((item) => (
-            <div key={item.objectID}>
-              <span>
-                <a href={item.url}>{item.title}</a>
-              </span>
-              <span>{item.author}</span>
-              <button onClick={() => this.onDismiss(item.objectID)}>
-                Dismiss
-              </button>
-            </div>
-          ))}
+          <form>
+            <input type="text" onChange={this.handleInput} />
+          </form>
+          {this.state.list
+            .filter(isSearched(this.state.searchTerm))
+            .map((item) => (
+              <div key={item.objectID}>
+                <span>
+                  <a href={item.url}>{item.title}</a>
+                </span>
+                <span>{item.author}</span>
+                <button onClick={() => this.onDismiss(item.objectID)}>
+                  Dismiss
+                </button>
+              </div>
+            ))}
         </div>
       </div>
     );
