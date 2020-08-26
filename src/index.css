@@ -31,6 +31,7 @@ input {
   border-radius: 5px;
   margin-left: 10px;
   border: 1px solid #dddddd;
+  width: 250px;
 }
 
 button:hover {
