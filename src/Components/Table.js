@@ -4,26 +4,26 @@ import Button from "./Button";
 const isSearched = (searchTerm) => (item) =>
   item.title.toLowerCase().includes(searchTerm.toLowerCase());
 
-class Table extends React.Component {
-  render() {
-    const { list, searchTerm, onDismiss } = this.props;
-    return (
-      <div>
-        {list.filter(isSearched(searchTerm)).map((item) => (
-          <div key={item.objectID}>
-            <span>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span>{item.author}</span>
+const Table = ({ list, searchTerm, onDismiss }) => {
+  return (
+    <div className="table">
+      {list.filter(isSearched(searchTerm)).map((item) => (
+        <div key={item.objectID} className="table-row">
+          <span style={{ width: "20%" }}>
+            <a href={item.url}>{item.title}</a>
+          </span>
+          <span style={{ width: "60%" }}>{item.author}</span>
+          <span style={{ width: "20%" }}>
             <Button
+              className="button-inline"
               onClick={() => onDismiss(item.objectID)}
               children="Dismiss"
             />
-          </div>
-        ))}
-      </div>
-    );
-  }
-}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default Table;

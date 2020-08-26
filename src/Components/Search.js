@@ -4,8 +4,13 @@ import React from "react";
 const Search = ({ value, onChange, children }) => {
   return (
     <form>
-      <labe>{children}</labe>
-      <input type="text" value={value} onChange={onChange} />
+      <input
+        placeholder={children}
+        type="text"
+        value={value}
+        onChange={onChange}
+        maxLength="15"
+      />
     </form>
   );
 };
