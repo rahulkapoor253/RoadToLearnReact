@@ -2,7 +2,7 @@ import React from "react";
 import Button from "./Button";
 
 const Table = ({ list, onDismiss }) => {
-  console.log(list);
+  //console.log(list);
   return (
     <div className="table">
       {list.map((item) => (

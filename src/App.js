@@ -16,7 +16,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      result: null,
+      results: null,
+      searchKey: "",
       searchTerm: DEFAULT_QUERY,
     };
 
@@ -30,21 +31,32 @@ class App extends React.Component {
 
   fetchStoriesBySearch = (page = 0) => {
     const { searchTerm } = this.state;
-    const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
+    this.setState({
+      searchKey: searchTerm,
+    });
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((result) => this.setTopStoriesResponse(result))
-      .catch((error) => error);
+    if (this.state.results == null || this.state.results[searchTerm] == null) {
+      const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((result) => this.setTopStoriesResponse(result))
+        .catch((error) => error);
+    }
   };
 
   setTopStoriesResponse = (result) => {
     const { hits, page } = result;
-    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const { searchKey, results } = this.state;
+    const oldHits =
+      results && results[searchKey] ? results[searchKey].hits : [];
     const updatedHits = [...oldHits, ...hits];
     //console.log(result);
     this.setState({
-      result: { hits: updatedHits, page },
+      results: {
+        ...results,
+        [searchKey]: { hits: updatedHits, page },
+      },
     });
   };
 
@@ -54,11 +66,12 @@ class App extends React.Component {
   };
 
   onDismiss = (id) => {
-    const updatedList = this.state.result.hits.filter(
-      (item) => item.objectID !== id
-    );
+    const { results, searchKey } = this.state;
+    const { hits, page } = results[searchKey];
+
+    const updatedList = hits.filter((item) => item.objectID !== id);
     this.setState({
-      result: { ...this.state.result, hits: updatedList },
+      results: { ...results, [searchKey]: { hits: updatedList, page } },
     });
   };
 
@@ -70,8 +83,11 @@ class App extends React.Component {
   };
 
   render() {
-    const { result, searchTerm } = this.state;
-    const page = (result && result.page) || 0;
+    const { results, searchTerm, searchKey } = this.state;
+    const page =
+      (results && results[searchKey] && results[searchKey].page) || 0;
+    const list =
+      (results && results[searchKey] && results[searchKey].hits) || [];
     return (
       <div className="App">
         <div className="App-header">
@@ -81,7 +97,7 @@ class App extends React.Component {
             onSubmit={this.onSearchSubmit}
             children="Search"
           />
-          {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
+          <Table list={list} onDismiss={this.onDismiss} />
           <Button
             children="More"
             onClick={() => this.fetchStoriesBySearch(page + 1)}
