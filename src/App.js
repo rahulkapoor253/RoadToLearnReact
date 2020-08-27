@@ -5,13 +5,15 @@ import Table from "./Components/Table";
 import Button from "./Components/Button";
 import axios from "axios";
 
-const DEFAULT_QUERY = "facebook";
-const PATH_BASE = "http://hn.algolia.com/api/v1";
-const PATH_SEARCH = "/search";
-const PARAM_SEARCH = "query=";
-const PARAM_PAGE = "page=";
-const PARAM_HPP = "hitsPerPage=";
-const DEFAULT_HPP = 50;
+import {
+  DEFAULT_QUERY,
+  DEFAULT_HPP,
+  PARAM_HPP,
+  PARAM_PAGE,
+  PARAM_SEARCH,
+  PATH_BASE,
+  PATH_SEARCH,
+} from "./Constants";
 
 class App extends React.Component {
   _isMounted = false;
