@@ -3,6 +3,7 @@ import "./App.css";
 import Search from "./Components/Search";
 import Table from "./Components/Table";
 import Button from "./Components/Button";
+import axios from "axios";
 
 const DEFAULT_QUERY = "facebook";
 const PATH_BASE = "http://hn.algolia.com/api/v1";
@@ -13,12 +14,15 @@ const PARAM_HPP = "hitsPerPage=";
 const DEFAULT_HPP = 50;
 
 class App extends React.Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {
       results: null,
       searchKey: "",
       searchTerm: DEFAULT_QUERY,
+      error: null,
     };
 
     //auto bound using ES6 arrow functions
@@ -26,7 +30,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetchStoriesBySearch();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetchStoriesBySearch = (page = 0) => {
@@ -38,10 +47,18 @@ class App extends React.Component {
     if (this.state.results == null || this.state.results[searchTerm] == null) {
       const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
 
-      fetch(url)
-        .then((response) => response.json())
-        .then((result) => this.setTopStoriesResponse(result))
-        .catch((error) => error);
+      //look for mounting to avoid data leaks
+      axios(url)
+        .then((response) => {
+          if (this._isMounted) {
+            this.setTopStoriesResponse(response.data);
+          }
+        })
+        .catch((error) => {
+          if (this._isMounted) {
+            this.setState({ error });
+          }
+        });
     }
   };
 
@@ -83,11 +100,12 @@ class App extends React.Component {
   };
 
   render() {
-    const { results, searchTerm, searchKey } = this.state;
+    const { results, searchTerm, searchKey, error } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
       (results && results[searchKey] && results[searchKey].hits) || [];
+
     return (
       <div className="App">
         <div className="App-header">
@@ -97,11 +115,19 @@ class App extends React.Component {
             onSubmit={this.onSearchSubmit}
             children="Search"
           />
-          <Table list={list} onDismiss={this.onDismiss} />
-          <Button
-            children="More"
-            onClick={() => this.fetchStoriesBySearch(page + 1)}
-          />
+          {error ? (
+            <div>
+              <p>Something went wrong. Please try again.</p>
+            </div>
+          ) : (
+            <React.Fragment>
+              <Table list={list} onDismiss={this.onDismiss} />
+              <Button
+                children="More"
+                onClick={() => this.fetchStoriesBySearch(page + 1)}
+              />
+            </React.Fragment>
+          )}
         </div>
       </div>
     );
