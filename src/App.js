@@ -4,6 +4,8 @@ import Search from "./Components/Search";
 import Table from "./Components/Table";
 import Button from "./Components/Button";
 import axios from "axios";
+//instead of using typescript we can use react proptypes
+import PropTypes from "prop-types";
 
 import {
   DEFAULT_QUERY,
@@ -14,6 +16,17 @@ import {
   PATH_BASE,
   PATH_SEARCH,
 } from "./Constants";
+
+Button.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+};
+
+Table.propTypes = {
+  list: PropTypes.array.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+};
 
 class App extends React.Component {
   _isMounted = false;
