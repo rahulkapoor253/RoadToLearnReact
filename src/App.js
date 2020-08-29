@@ -6,6 +6,7 @@ import Button from "./Components/Button";
 import axios from "axios";
 //instead of using typescript we can use react proptypes
 import PropTypes from "prop-types";
+import Loading from "./Components/Loading";
 
 import {
   DEFAULT_QUERY,
@@ -27,6 +28,7 @@ class App extends React.Component {
       searchKey: "",
       searchTerm: DEFAULT_QUERY,
       error: null,
+      isLoading: false,
     };
 
     //auto bound using ES6 arrow functions
@@ -52,6 +54,10 @@ class App extends React.Component {
   }
 
   fetchStoriesBySearch = (searchTerm, page = 0) => {
+    this.setState({
+      isLoading: true,
+    });
+
     const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
 
     //look for mounting to avoid data leaks
@@ -59,11 +65,17 @@ class App extends React.Component {
       .then((response) => {
         if (this._isMounted) {
           this.setTopStoriesResponse(response.data);
+          this.setState({
+            isLoading: false,
+          });
         }
       })
       .catch((error) => {
         if (this._isMounted) {
           this.setState({ error });
+          this.setState({
+            isLoading: false,
+          });
         }
       });
   };
@@ -133,11 +145,24 @@ class App extends React.Component {
             </div>
           ) : (
             <React.Fragment>
-              <Table list={list} onDismiss={this.onDismiss} />
-              <Button
-                children="More"
-                onClick={() => this.fetchStoriesBySearch(searchKey, page + 1)}
-              />
+              {this.state.isLoading ? (
+                <div style={{ marginTop: "15vh" }}>
+                  <Loading />
+                  <div>
+                    <p>Loading...</p>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <Table list={list} onDismiss={this.onDismiss} />
+                  <Button
+                    children="More"
+                    onClick={() =>
+                      this.fetchStoriesBySearch(searchKey, page + 1)
+                    }
+                  />
+                </div>
+              )}
             </React.Fragment>
           )}
         </div>
