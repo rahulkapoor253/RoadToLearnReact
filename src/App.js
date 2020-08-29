@@ -7,7 +7,6 @@ import axios from "axios";
 //instead of using typescript we can use react proptypes
 import PropTypes from "prop-types";
 import Loading from "./Components/Loading";
-
 import {
   DEFAULT_QUERY,
   DEFAULT_HPP,
@@ -23,6 +22,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
+    //also store the state of SORT
     this.state = {
       results: null,
       searchKey: "",
@@ -172,20 +172,20 @@ class App extends React.Component {
 }
 
 Button.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   className: PropTypes.string,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };
 
 Table.propTypes = {
   list: PropTypes.arrayOf(
     PropTypes.shape({
-      objectID: PropTypes.string.isRequired,
+      objectID: PropTypes.string,
       author: PropTypes.string,
       url: PropTypes.string,
     })
   ).isRequired,
-  onDismiss: PropTypes.func.isRequired,
+  onDismiss: PropTypes.func,
 };
 
 export default App;

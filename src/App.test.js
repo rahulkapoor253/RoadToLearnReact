@@ -29,12 +29,6 @@ describe("App", () => {
     render(<App />);
     expect(screen.getByText("Submit")).toBeInTheDocument();
   });
-
-  test("has valid snapshot", () => {
-    const component = renderer.create(<App />);
-    const tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
-  });
 });
 
 describe("Search", () => {
@@ -56,7 +50,7 @@ describe("Search", () => {
 describe("Button", () => {
   it("renders success", () => {
     const div = document.createElement("div");
-    ReactDOM.render(<Button />, div);
+    ReactDOM.render(<Button>Button component</Button>, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 
@@ -73,18 +67,13 @@ describe("Table", () => {
       { title: "1", author: "1", num_comments: 1, points: 2, objectID: "y" },
       { title: "2", author: "2", num_comments: 1, points: 2, objectID: "z" },
     ],
+    sortKey: "TITLE",
   };
 
   it("renders success", () => {
     const div = document.createElement("div");
     ReactDOM.render(<Table {...props} />, div);
     ReactDOM.unmountComponentAtNode(div);
-  });
-
-  test("has valid snapshot", () => {
-    const component = renderer.create(<Table {...props} />);
-    const tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
   });
 
   //enzyme test
