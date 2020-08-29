@@ -48,12 +48,10 @@ class Table extends React.Component {
         {sortedList.map((item) => (
           <div key={item.objectID} className="table-row">
             <span className="large-data">
-              <a style={{ marginRight: "4px" }} href={item.url}>
-                {item.title}
-              </a>
+              <a href={item.url}>{item.title}</a>
             </span>
             <span className="medium-data">
-              <span style={{ marginRight: "4px" }}>{item.author}</span>
+              <span>{item.author}</span>
             </span>
             <span className="small-data">
               <Button

@@ -147,7 +147,7 @@ class App extends React.Component {
           ) : (
             <React.Fragment>
               {this.state.isLoading ? (
-                <div style={{ marginTop: "15vh" }}>
+                <div className="loading-container">
                   <Loading />
                   <div>
                     <p>Loading...</p>
