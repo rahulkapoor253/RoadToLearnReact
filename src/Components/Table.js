@@ -30,23 +30,32 @@ class Table extends React.Component {
     const sortedList = SORTS[sortKey](list);
     return (
       <div className="table">
+        <div className="table-row">
+          <span className="large-data">
+            Title
+            <Sort
+              sortKey="TITLE"
+              onSort={this.onSort}
+              className="button-title"
+            />
+          </span>
+          <span className="medium-data">
+            Author
+            <Sort sortKey="AUTHOR" onSort={this.onSort} />
+          </span>
+          <span className="small-data">Actions</span>
+        </div>
         {sortedList.map((item) => (
           <div key={item.objectID} className="table-row">
-            <span style={{ width: "70%" }}>
+            <span className="large-data">
               <a style={{ marginRight: "4px" }} href={item.url}>
                 {item.title}
               </a>
-              <Sort
-                sortKey="TITLE"
-                onSort={this.onSort}
-                className="button-title"
-              />
             </span>
-            <span style={{ width: "20%" }}>
+            <span className="medium-data">
               <span style={{ marginRight: "4px" }}>{item.author}</span>
-              <Sort sortKey="AUTHOR" onSort={this.onSort} />
             </span>
-            <span style={{ width: "10%" }}>
+            <span className="small-data">
               <Button
                 className="button-inline"
                 onClick={() => onDismiss(item.objectID)}

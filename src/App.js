@@ -153,7 +153,7 @@ class App extends React.Component {
                   </div>
                 </div>
               ) : (
-                <div>
+                <div className="content-container">
                   <Table list={list} onDismiss={this.onDismiss} />
                   <Button
                     children="More"

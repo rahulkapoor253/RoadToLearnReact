@@ -72,3 +72,23 @@
   border-radius: 0;
   border-bottom: 1px solid #38bb6c;
 }
+
+.content-container {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.small-data {
+  width: 10%;
+  text-align: center;
+}
+
+.medium-data {
+  width: 20%;
+  text-align: start;
+}
+
+.large-data {
+  width: 70%;
+  text-align: start;
+}
