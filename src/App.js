@@ -17,17 +17,6 @@ import {
   PATH_SEARCH,
 } from "./Constants";
 
-Button.propTypes = {
-  children: PropTypes.node.isRequired,
-  className: PropTypes.string,
-  onClick: PropTypes.func.isRequired,
-};
-
-Table.propTypes = {
-  list: PropTypes.array.isRequired,
-  onDismiss: PropTypes.func.isRequired,
-};
-
 class App extends React.Component {
   _isMounted = false;
 
@@ -46,35 +35,37 @@ class App extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-    this.fetchStoriesBySearch();
+    const { searchTerm } = this.state;
+    this.setState({
+      searchKey: searchTerm,
+    });
+
+    this.fetchStoriesBySearch(searchTerm);
   }
 
   componentWillUnmount() {
     this._isMounted = false;
   }
 
-  fetchStoriesBySearch = (page = 0) => {
-    const { searchTerm } = this.state;
-    this.setState({
-      searchKey: searchTerm,
-    });
+  needsToSearchTopStories(searchTerm) {
+    return !this.state.results[searchTerm];
+  }
 
-    if (this.state.results == null || this.state.results[searchTerm] == null) {
-      const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
+  fetchStoriesBySearch = (searchTerm, page = 0) => {
+    const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
 
-      //look for mounting to avoid data leaks
-      axios(url)
-        .then((response) => {
-          if (this._isMounted) {
-            this.setTopStoriesResponse(response.data);
-          }
-        })
-        .catch((error) => {
-          if (this._isMounted) {
-            this.setState({ error });
-          }
-        });
-    }
+    //look for mounting to avoid data leaks
+    axios(url)
+      .then((response) => {
+        if (this._isMounted) {
+          this.setTopStoriesResponse(response.data);
+        }
+      })
+      .catch((error) => {
+        if (this._isMounted) {
+          this.setState({ error });
+        }
+      });
   };
 
   setTopStoriesResponse = (result) => {
@@ -94,7 +85,13 @@ class App extends React.Component {
 
   onSearchSubmit = (event) => {
     event.preventDefault();
-    this.fetchStoriesBySearch();
+    const { searchTerm } = this.state;
+    this.setState({
+      searchKey: searchTerm,
+    });
+    if (this.needsToSearchTopStories(searchTerm)) {
+      this.fetchStoriesBySearch();
+    }
   };
 
   onDismiss = (id) => {
@@ -139,7 +136,7 @@ class App extends React.Component {
               <Table list={list} onDismiss={this.onDismiss} />
               <Button
                 children="More"
-                onClick={() => this.fetchStoriesBySearch(page + 1)}
+                onClick={() => this.fetchStoriesBySearch(searchKey, page + 1)}
               />
             </React.Fragment>
           )}
@@ -148,5 +145,22 @@ class App extends React.Component {
     );
   }
 }
+
+Button.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+};
+
+Table.propTypes = {
+  list: PropTypes.arrayOf(
+    PropTypes.shape({
+      objectID: PropTypes.string.isRequired,
+      author: PropTypes.string,
+      url: PropTypes.string,
+    })
+  ).isRequired,
+  onDismiss: PropTypes.func.isRequired,
+};
 
 export default App;
