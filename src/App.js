@@ -58,10 +58,11 @@ class App extends React.Component {
       isLoading: true,
     });
 
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
     const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`;
 
     //look for mounting to avoid data leaks
-    axios(url)
+    axios(proxyurl + url)
       .then((response) => {
         if (this._isMounted) {
           this.setTopStoriesResponse(response.data);
